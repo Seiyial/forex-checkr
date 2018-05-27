@@ -21,6 +21,7 @@ I want to track some forex rates. Typical use cases:
 - Given the bootstrapped node server (index.js), create endpoints for **C**reating, **R**eading, **U**pdating and **D**eleting
 - Use a **local database** to store forex level objects
 - **Simple interface** to set, update, delete forex levels
+- Duplicate `.env.example` into `.env` and insert the required values.
 
 ## Boundaries
 

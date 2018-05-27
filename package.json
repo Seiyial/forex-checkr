@@ -4,13 +4,14 @@
   "description": "Interview test: Design a webapp with Node.JS",
   "main": "index.js",
   "scripts": {
-    "start": "node ."
+    "start": "source .env && node ."
   },
-  "engines" : { 
-    "node" : ">=8.9.0" 
+  "engines": {
+    "node": ">=8.9.0"
   },
   "repository": "git@github.com:calllevels/interview-node.git",
   "dependencies": {
+    "dotenv": "^5.0.1",
     "express": "^4.16.2"
   }
 }
