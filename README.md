@@ -14,14 +14,16 @@ I want to track some forex rates. Typical use cases:
 ## Setup
 
 - Install dependencies `yarn`
+- Duplicate `.env.example` into `.env` and insert the required values.
+- Make sure you have a database called `forex_checkr` created under the same user specified in your `.env` file.
 - Launch server `yarn start`
+
 
 ## Development
 
 - Given the bootstrapped node server (index.js), create endpoints for **C**reating, **R**eading, **U**pdating and **D**eleting
 - Use a **local database** to store forex level objects
 - **Simple interface** to set, update, delete forex levels
-- Duplicate `.env.example` into `.env` and insert the required values.
 
 ## Boundaries
 

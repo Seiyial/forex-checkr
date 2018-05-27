@@ -4,7 +4,8 @@
   "description": "Interview test: Design a webapp with Node.JS",
   "main": "index.js",
   "scripts": {
-    "start": "source .env && node ."
+    "start": "node .",
+    "db:migrate": "knex migrate:latest"
   },
   "engines": {
     "node": ">=8.9.0"
@@ -12,6 +13,8 @@
   "repository": "git@github.com:calllevels/interview-node.git",
   "dependencies": {
     "dotenv": "^5.0.1",
-    "express": "^4.16.2"
+    "express": "^4.16.2",
+    "knex": "^0.14.6",
+    "pg": "^7.4.3"
   }
 }
