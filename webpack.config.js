@@ -6,7 +6,7 @@ module.exports = {
   entry: './src/client/index.js',
   output: {
     path: path.resolve(__dirname, outputDir),
-    filename: 'bundle.js' // dependent: html-webpack-plugin
+    filename: 'bundle.js' // html-webpack-plugin depends on this
   },
   module: {
     rules: [
@@ -24,10 +24,10 @@ module.exports = {
     ]
   },
   devServer: {
-    port: 3000,
+    port: 5000,
     open: true,
     proxy: {
-      '/api': 'http://localhost:5000'
+      '/api': 'http://localhost:5001'
     }
   },
   plugins: [
@@ -36,5 +36,8 @@ module.exports = {
       template: './public/index.html'
       // favicon: './public/favicon.ico'
     })
-  ]
+  ],
+  node: {
+    fs: 'empty'
+  }
 };
