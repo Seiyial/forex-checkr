@@ -27,7 +27,7 @@ module.exports = {
     port: 5000,
     open: true,
     proxy: {
-      '/api': 'http://localhost:5001'
+      '/fixer_api': 'http://localhost:5001'
     }
   },
   plugins: [

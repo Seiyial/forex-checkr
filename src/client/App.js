@@ -1,13 +1,12 @@
 import React from 'react'
 import $ from 'jquery'
-require('dotenv').config()
+import SearchDisplay from './components/SearchDisplay'
 
 const formatForexCode = (input) => input.substring(0,3).toUpperCase()
 
 export default class App extends React.Component {
   constructor() {
     super()
-    // this.parseForexRate = this.parseForexRate.bind(this)
     this.state = {
       searchBox1: '',
       searchBox2: 'EUR',
@@ -19,53 +18,22 @@ export default class App extends React.Component {
     const searchVal1 = this.state.searchBox1
     const searchVal2 = this.state.searchBox2
 
-    $.get(`http://data.fixer.io/api/latest?access_key=${process.env.FIXER_API_KEY}`, '', (data, status, jqXHR) => {
-    //   console.log("data", data, status)
-    //   const updateSearch = (obj) => this.setState({ searchShow: obj })
-
-    //   if (status !== 200) {
-    //     updateSearch({
-    //       status: 'fail',
-    //       message: 'Service Error! Please contact tech support (Fixer API did not return 200)'
-    //     })
-
-    //   } else if (data.success) {
-    //     const rates = data.rates
-    //     const hasRates = rates && rates[searchVal1] && rates[searchVal2]
-    //     updateSearch(hasRates ? 
-    //       {
-    //         status: 'success',
-    //         searchVal1,
-    //         searchVal2,
-    //         displayRate: rates[searchVal1]
-    //       }
-    //     :
-    //       {
-    //         status: 'fail',
-    //         message: 'Service Error! Please contact tech support (Fixer API returned success without rate object)',
-    //       }
-    //     )
-
-    //   } else if (data.error && data.error.code === 202) {
-    //     updateSearch({
-    //       status: 'fail',
-    //       message: `You requested ${searchBox1} and ${searchBox2}. Please check that these are valid currencies, and try again.`
-    //     })
-
-    //   } else if (data.error) {
-    //     updateSearch({
-    //       status: 'fail',
-    //       message: `Service Error! Please contact tech support
-    //       (Fixer API Error ${data.error.code}: ${data.error.message})`
-    //     })
-
-    //   } else {
-    //     updateSearch({
-    //       status: 'fail',
-    //       message: `Service Error! Please contact tech support
-    //       (Fixer API Error (null error object))`
-    //     })
-    //   }
+    $.ajax({
+      url: `http://localhost:5000/fixer_api/${searchVal1}/${searchVal2}`,
+      data: '',
+      crossDomain: true,
+      success: (data, jQueryStatus, jqXHR) => {
+        const { status, searchVal1, searchVal2, displayRate, errorMessage } = data
+        console.log('(*) data =>', data)
+        if (status) {
+          this.setState({ searchShow: data })
+        } else {
+          this.setState({ searchShow: {
+            status: 'fail',
+            errorMessage: 'Service Error! Please contact tech support (failed to call express fixerAPI endpoint)'
+          } })
+        }
+      }
     })
   }
 
@@ -117,6 +85,11 @@ export default class App extends React.Component {
             })}
           >Search</button>
         </div>
+
+        <SearchDisplay
+          searchShow={this.state.searchShow}
+          handleSaveItem={this.handleSaveItem}
+        />
       </div>
     )
   }

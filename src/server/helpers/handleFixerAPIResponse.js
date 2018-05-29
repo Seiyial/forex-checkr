@@ -24,7 +24,7 @@ exports.default = function (error, response, body, searchVal1, searchVal2) {
       // --> no match for searched Values
       {
         status: 'fail',
-        message: 'Service Error! Please contact tech support (Fixer API returned success without rate object)',
+        errorMessage: 'Service Error! Please contact tech support (Fixer API returned success without rate object)',
       }
     )
 
@@ -32,14 +32,14 @@ exports.default = function (error, response, body, searchVal1, searchVal2) {
     return({
       // --> Fixer-side message for no match of searched values
       status: 'fail',
-      message: `You requested ${searchBox1} and ${searchBox2}. Please check that these are valid currencies, and try again.`
+      errorMessage: `You requested ${searchBox1} and ${searchBox2}. Please check that these are valid currencies, and try again.`
     })
 
   } else if (data.error) {
     return({
       // --> Miscellaneous Fixer-side error
       status: 'fail',
-      message: `Service Error! Please contact tech support
+      errorMessage: `Service Error! Please contact tech support
       (Fixer API Error ${data.error.code}: ${data.error.message})`
     })
 
@@ -47,7 +47,7 @@ exports.default = function (error, response, body, searchVal1, searchVal2) {
     return({
       // --> No error object returned from Fixer
       status: 'fail',
-      message: `Service Error! Please contact tech support
+      errorMessage: `Service Error! Please contact tech support
       (Fixer API Error (null error object))`
     })
   }
