@@ -1,7 +1,5 @@
 exports.default = function (error, response, body, searchVal1, searchVal2) {
   const data = JSON.parse(body)
-  console.log('(*) data.success =>', data.success)
-  console.log('(*) response =>', response.statusCode)
 
   if (response.statusCode !== 200) {
 
