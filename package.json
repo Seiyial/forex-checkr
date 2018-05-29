@@ -5,7 +5,7 @@
   "main": "src/server/index.js",
   "scripts": {
     "start": "concurrently \"yarn run server\" \"yarn run client\"",
-    "server": "node src/server/index.js",
+    "server": "nodemon src/server/index.js",
     "client": "webpack-dev-server --mode development --devtool inline-source-map --hot",
     "db:migrate": "knex migrate:latest"
   },
@@ -30,6 +30,7 @@
     "concurrently": "^3.5.1",
     "css-loader": "^0.28.11",
     "html-webpack-plugin": "^3.2.0",
+    "nodemon": "^1.17.5",
     "react": "^16.4.0",
     "react-dom": "^16.4.0",
     "style-loader": "^0.21.0",

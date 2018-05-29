@@ -1,7 +1,9 @@
 exports.default = function (error, response, body, searchVal1, searchVal2) {
-  console.log('body', body)
+  const data = JSON.parse(body)
+  console.log('(*) data.success =>', data.success)
+  console.log('(*) response =>', response.statusCode)
 
-  if (response.status !== 200) {
+  if (response.statusCode !== 200) {
 
     return({
       status: 'fail',
@@ -9,8 +11,8 @@ exports.default = function (error, response, body, searchVal1, searchVal2) {
     })
 
   // Requests receives data from API --
-  } else if (body.success) {
-    const rates = body.rates
+  } else if (data.success) {
+    const rates = data.rates
     const hasRates = rates && rates[searchVal1] && rates[searchVal2]
     return(hasRates ?
       // --> has match for searched values
@@ -28,19 +30,19 @@ exports.default = function (error, response, body, searchVal1, searchVal2) {
       }
     )
 
-  } else if (body.error && body.error.code === 202) {
+  } else if (data.error && data.error.code === 202) {
     return({
       // --> Fixer-side message for no match of searched values
       status: 'fail',
       message: `You requested ${searchBox1} and ${searchBox2}. Please check that these are valid currencies, and try again.`
     })
 
-  } else if (body.error) {
+  } else if (data.error) {
     return({
       // --> Miscellaneous Fixer-side error
       status: 'fail',
       message: `Service Error! Please contact tech support
-      (Fixer API Error ${body.error.code}: ${body.error.message})`
+      (Fixer API Error ${data.error.code}: ${data.error.message})`
     })
 
   } else {
