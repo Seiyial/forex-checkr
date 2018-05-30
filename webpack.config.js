@@ -27,7 +27,8 @@ module.exports = {
     port: 5000,
     open: true,
     proxy: {
-      '/fixer_api': 'http://localhost:5001'
+      '/fixer_api': 'http://localhost:5001',
+      '/forex_levels': 'http://localhost:5001'
     }
   },
   plugins: [
