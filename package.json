@@ -5,8 +5,8 @@
   "main": "src/server/index.js",
   "scripts": {
     "start": "concurrently \"yarn run server\" \"yarn run client\"",
-    "server": "nodemon src/server/index.js",
-    "client": "webpack-dev-server --mode development --devtool inline-source-map --hot",
+    "server": "NODE_ENV=development nodemon src/server/index.js",
+    "client": "NODE_ENV=development webpack-dev-server --mode development --devtool inline-source-map --hot",
     "db:migrate": "knex migrate:latest"
   },
   "engines": {
@@ -14,6 +14,7 @@
   },
   "repository": "git@github.com:calllevels/interview-node.git",
   "dependencies": {
+    "body-parser": "^1.18.3",
     "dotenv": "^5.0.1",
     "express": "^4.16.2",
     "jquery": "^3.3.1",

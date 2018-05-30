@@ -1,5 +1,7 @@
 const dotEnvLoad = require('dotenv').config()
+const knex = () => require('knex')(require('../../knexfile').development)
 const express = require('express')
+const bodyParser = require('body-parser')
 const request = require('request')
 const app = express()
 const handleFixerAPIResponse = require('./helpers/handleFixerAPIResponse').default
@@ -7,11 +9,13 @@ const handleFixerAPIResponse = require('./helpers/handleFixerAPIResponse').defau
 // ----------------------------------------------------
 // Displayed Routes
 app.use(express.static('dist')) // webpack bundle folder
+app.use(bodyParser.json())
 
 // ----------------------------------------------------
 // API Routes
+
+// Fixer API GetData
 app.get('/fixer_api/:searchVal1/:searchVal2', function (req, res) {
-  if (process.env.NODE_ENV === 'development') res.header('Access-Control-Allow-Origin', '*')
   const { searchVal1, searchVal2 } = req.params
   request(
     `http://data.fixer.io/api/latest?access_key=${process.env.FIXER_API_ACCESS_KEY}`,
@@ -19,9 +23,38 @@ app.get('/fixer_api/:searchVal1/:searchVal2', function (req, res) {
   )
 })
 
+// Create
 app.post('/forex_levels', function(req, res) {
+  const { searchVal1, searchVal2, upperVal, lowerVal, displayRate } = req.body
   console.log('(*) req.body =>', req.body)
-  res.send('hi there')
+  let dbResult
+  const dbConn = knex()
+  dbConn.table('forex_levels').insert({
+    forex_name: 'SGD-EUR',
+    upper: '5.2345',
+    lower: '2.345',
+    status: false
+  }).then((dbResp) => {
+    console.log(dbResp)
+    res.json({ success: true })
+  })
+  .catch((dbErr) => {
+    console.log(dbErr)
+    res.json({ success: false, message: 'Failed to add new item' })
+  })
+  setTimeout(() => dbConn.destroy(), 5000)
+  setTimeout(() => res.json({ success: false, message: 'timeout' }), 7000)
+})
+
+// LIST
+app.get('/forex_levels', function(req, res) {
+  dbConn = knex()
+  dbConn.select().from('forex_levels').then(
+    (dbResp) => res.json({ success: true, data: dbResp })
+  ).catch((dbErr) => {
+    console.log(dbErr)
+    res.json({ success: false, message: 'System Database Error' })
+  })
 })
 
 // ----------------------------------------------------

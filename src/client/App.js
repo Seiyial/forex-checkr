@@ -34,13 +34,17 @@ export default class App extends React.Component {
       return that.setState({ newRecordFormMessage: 'Please input the upper & lower limits.'})
     } else if (displayRate && (upper > displayRate) && (lower < displayRate)) {
       console.log('(*) handleCreateRecord =>', upperVal, lowerVal, displayRate)
+      const payload = JSON.stringify({ searchVal1, searchVal2, upperVal, lowerVal, displayRate })
+      // console.log('(*) payload =>', payload)
       $.ajax({
         url: 'http://localhost:5000/forex_levels',
         type: 'POST',
-        body: { searchVal1, searchVal2, upperVal, lowerVal, displayRate },
+        contentType: 'application/json',
+        data: payload,
         success: (data, textStatus, jqXHR) => {
-          console.log('(*) status =>', textStatus)
-          that.setState({ newRecordFormMessage: 'successfully saved.' })
+          console.log('(*) status =>', data)
+          const message = data.success ? 'Successfully saved.' : (data.message || '')
+          that.setState({ newRecordFormMessage: message })
         },
         error: (jqXHR, textStatus, errorThrown) => {
           that.setState({ newRecordFormMessage: `error saving: ${textStatus}, ${errorThrown}`})
