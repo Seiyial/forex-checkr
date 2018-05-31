@@ -30,20 +30,19 @@ app.post('/forex_levels', function(req, res) {
   let dbResult
   const dbConn = knex()
   dbConn.table('forex_levels').insert({
-    forex_name: 'SGD-EUR',
-    upper: '5.2345',
-    lower: '2.345',
-    status: false
+    forex_name: searchVal1 + '-' + searchVal2,
+    upper: upperVal,
+    lower: lowerVal,
+    status: true
   }).then((dbResp) => {
-    console.log(dbResp)
     res.json({ success: true })
+    dbConn.destroy()
   })
   .catch((dbErr) => {
     console.log(dbErr)
     res.json({ success: false, message: 'Failed to add new item' })
+    dbConn.destroy()
   })
-  setTimeout(() => dbConn.destroy(), 5000)
-  setTimeout(() => res.json({ success: false, message: 'timeout' }), 7000)
 })
 
 // LIST
@@ -51,6 +50,22 @@ app.get('/forex_levels', function(req, res) {
   const dbConn = knex()
   dbConn.select().from('forex_levels').then((dbResp) => {
     res.json({ apiSuccess: true, dbPayload: dbResp })
+    console.log('() send forex levels')
+    dbConn.destroy()
+  }).catch((dbErr) => {
+    console.log(dbErr)
+    res.json({ apiSuccess: false, message: 'Sorry, database error' })
+    dbConn.destroy()
+  })
+})
+
+// DELETE
+app.delete('/forex_levels', function(req, res) {
+  console.log('(*) req.body =>', req.body)
+  const dbConn = knex()
+  dbConn('forex_levels').where('id', req.body.id).del().then((dbResp) => {
+    res.json({ apiSuccess: true })
+    console.log('-delete forex level', req.body.id)
     dbConn.destroy()
   }).catch((dbErr) => {
     console.log(dbErr)

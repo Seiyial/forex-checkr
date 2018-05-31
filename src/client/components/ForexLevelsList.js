@@ -25,13 +25,12 @@ class ForexLevelsList extends React.Component {
       contentType: 'application/json',
 
       success: (payload, textStatus, jqXHR) => {
-        // console.log('(*) textStatus =>', textStatus)
-        // console.log('(*) data =>', payload)
         const { apiSuccess, dbPayload, message } = payload
         if (!apiSuccess || textStatus !== 'success') {
           console.log('apiSuccess', apiSuccess, 'textStatus', textStatus, 'dbPayload', dbPayload)
           this.setState({ levelData: { success: false, message } })
         } else {
+          console.log('(#) refresh records (ok)')
           this.setState({ levelData: { success: true, data: dbPayload } })
         }
       }
@@ -41,12 +40,31 @@ class ForexLevelsList extends React.Component {
   deleteRecord(id) {
     const reallyDelete = window.confirm('Are you sure?')
     if (reallyDelete) {
-      console.log('(*) begin deleting!')
+      const payload = JSON.stringify({ id })
+      console.log('(*) begin deleting', payload)
+      $.ajax({
+        url: 'http://localhost:5000/forex_levels',
+        type: 'DELETE',
+        contentType: 'application/json',
+        data: payload,
+
+        success: (data, textStatus, jqXHR) => {
+          if (data.apiSuccess) {
+            this.refreshRecords()
+            window.alert('successfully deleted')
+          } else {
+            window.alert('oops, please try again')
+          }
+        },
+
+        error: (jqXHR, textStatus, errorThrown) => {
+          window.alert(`oops, please try again (${textStatus}, ${errorThrown})`)
+        }
+      })
     }
   }
 
   render() {
-    // console.log('(*) this.state.levelData =>', this.state.levelData)
     const { levelData: { success, data, message } } = this.state
     return(
       <div>
