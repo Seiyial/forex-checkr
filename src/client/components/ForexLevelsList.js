@@ -1,12 +1,14 @@
 import React from 'react'
 import $ from 'jquery'
+import _ from 'lodash'
 
 class ForexLevelsList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
       levelData: {},
-      liveRates: {}
+      liveRates: {},
+      editForm: { upper: '', lower: '', id: '' }
     }
     this.refreshRecords()
     this.refreshLiveRates()
@@ -87,6 +89,71 @@ class ForexLevelsList extends React.Component {
     return result
   }
 
+  activateEditing(id) {
+    const { data } = this.state.levelData
+    console.log('(*) levelData =>', data)
+    const { upper, lower, forex_name } = data.find(element => element.id === id)
+    // Set Editing HTML
+    const formContent = ({ upperVal, lowerVal }) => (
+      <tr
+        key={`forexListItemId-edit`}
+      >
+        <td>{forex_name}</td>
+        <td>
+          <div className='field'>
+            <p className='control'>
+              <input className='input' value={upperVal} onChange={(e) => this.setState({ editForm: { ...this.state.editForm, upper: e.target.value } })} />
+            </p>
+          </div>
+        </td>
+        <td>{this.pluckLiveRate(forex_name)}</td>
+        <td>
+          <div className='field'>
+            <p className='control'>
+              <input className='input' value={lowerVal} onChange={(e) => this.setState({ editForm: { ...this.state.editForm, lower: e.target.value } })} />
+            </p>
+          </div>
+        </td>
+        <td>
+          <button className='button is-primary' onClick={() => this.updateRecord()}>Save</button>
+        </td>
+        <td>
+          <button className='button is-info' onClick={() => this.cancelEditing()}>Cancel</button>
+        </td>
+      </tr>
+    )
+    // Set Edit Form State
+    this.setState({ editForm: { id, upper, lower, formContent } })
+    console.log('(*) this.state.editForm =>', this.state.editForm)
+  }
+
+  cancelEditing() {
+    this.setState({ editForm: { id: '', upper: '', lower: '' } })
+  }
+
+  updateRecord() {
+    const { editForm: { id, upper, lower } } = this.state
+    $.ajax({
+      url: `http://localhost:5000/forex_levels/${id}`,
+      type: 'POST',
+      contentType: 'application/json',
+      data: JSON.stringify({ id, upper, lower }),
+
+      success: (payload, textStatus, jqXHR) => {
+        if (payload.apiSuccess) {
+          this.setState({ editForm: {} })
+          this.refreshRecords()
+        } else {
+          window.alert('oops, please try again')
+        }
+      },
+
+      error: (jqXHR, textStatus, errorThrown) => {
+        window.alert(`oops, please try again (${textStatus}, ${errorThrown})`)
+      }
+    })
+  }
+
   deleteRecord(id) {
     const reallyDelete = window.confirm('Are you sure?')
     if (reallyDelete) {
@@ -101,7 +168,6 @@ class ForexLevelsList extends React.Component {
         success: (data, textStatus, jqXHR) => {
           if (data.apiSuccess) {
             this.refreshRecords()
-            // window.alert('successfully deleted')
           } else {
             window.alert('oops, please try again')
           }
@@ -115,7 +181,8 @@ class ForexLevelsList extends React.Component {
   }
 
   render() {
-    const { levelData: { success, data, message } } = this.state
+    const { levelData: { success, data, message }, editForm } = this.state
+    console.log('(*) editForm =>', editForm)
     return(
       <div className='section'>
         <h4 className='subtitle is-4'>Saved Forex Levels</h4>
@@ -126,9 +193,9 @@ class ForexLevelsList extends React.Component {
               <tr>
                 <th>Forex</th>
                 <th>Upper Limit</th>
-                <th>Current Rate</th>
+                <th>Currently</th>
                 <th>Lower Limit</th>
-                <th></th>
+                <th colSpan='2'>Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -138,16 +205,25 @@ class ForexLevelsList extends React.Component {
                 const liveRate = this.pluckLiveRate(item.forex_name)
                 const trClassName = this.getRowCssClassByStatus(item, liveRate)
                 return (
-                  <tr
-                    className={trClassName}
-                    key={`forexListItemId-${item.id}`}
-                  >
-                    <td>{item.forex_name}</td>
-                    <td>{item.upper}</td>
-                    <td>{this.pluckLiveRate(item.forex_name)}</td>
-                    <td>{item.lower}</td>
-                    <td><a href='' onClick={(e) => {e.preventDefault(); this.deleteRecord(item.id)}}>Delete</a></td>
-                  </tr>
+                  <React.Fragment key={`forexListItemId-${item.id}`}>
+                  {
+                    (editForm.id === item.id) ?
+                    <editForm.formContent upperVal={editForm.upper} lowerVal={editForm.lower} />
+                    :
+                    <tr className={trClassName}>
+                      <td>{item.forex_name}</td>
+                      <td>{item.upper}</td>
+                      <td>{this.pluckLiveRate(item.forex_name)}</td>
+                      <td>{item.lower}</td>
+                      <td>
+                        <a href='' onClick={(e) => {e.preventDefault(); this.activateEditing(item.id)}}>Edit</a>
+                      </td>
+                      <td>
+                        <a href='' onClick={(e) => {e.preventDefault(); this.deleteRecord(item.id)}}>Delete</a>
+                      </td>
+                    </tr>
+                  }
+                  </React.Fragment>
                 )
               }))
               :

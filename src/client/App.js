@@ -45,7 +45,7 @@ export default class App extends React.Component {
 
         success: (data, textStatus, jqXHR) => {
           const message = data.success ? 'Successfully saved.' : (data.message || '')
-          that.setState({ newRecordFormMessage: message })
+          that.setState({ newRecordFormMessage: message, searchShow: { status: null } })
         },
 
         error: (jqXHR, textStatus, errorThrown) => {

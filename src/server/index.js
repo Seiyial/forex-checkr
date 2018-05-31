@@ -31,7 +31,36 @@ app.get('/fixer_api', function (req, res) {
   )
 })
 
-// Create
+// LIST
+app.get('/forex_levels', function(req, res) {
+  const dbConn = knex()
+  dbConn.select().from('forex_levels').then((dbResp) => {
+    res.json({ apiSuccess: true, dbPayload: dbResp })
+    console.log('() send forex levels')
+    dbConn.destroy()
+  }).catch((dbErr) => {
+    console.log(dbErr)
+    res.json({ apiSuccess: false, message: 'Sorry, database error' })
+    dbConn.destroy()
+  })
+})
+
+// UPDATE
+app.post('/forex_levels/:id', function(req, res) {
+  const { id, upper, lower } = req.body
+  const dbConn = knex()
+  dbConn('forex_levels').where('id', id).update({ upper, lower }).then((dbResp) => {
+    console.log('update forex level ✓')
+    res.json({ apiSuccess: true, dbPayload: dbResp })
+    dbConn.destroy()
+  }).catch((dbErr) => {
+    console.log(dbErr)
+    res.json({ apiSuccess: false, message: 'Sorry, database error (at finding POSTed ID)' })
+    dbConn.destroy()
+  })
+})
+
+// CREATE
 app.post('/forex_levels', function(req, res) {
   const { searchVal1, searchVal2, upperVal, lowerVal, displayRate } = req.body
   console.log('(*) req.body =>', req.body)
@@ -59,20 +88,6 @@ app.post('/forex_levels', function(req, res) {
         dbConn.destroy()
       })
     }
-  })
-})
-
-// LIST
-app.get('/forex_levels', function(req, res) {
-  const dbConn = knex()
-  dbConn.select().from('forex_levels').then((dbResp) => {
-    res.json({ apiSuccess: true, dbPayload: dbResp })
-    console.log('() send forex levels')
-    dbConn.destroy()
-  }).catch((dbErr) => {
-    console.log(dbErr)
-    res.json({ apiSuccess: false, message: 'Sorry, database error' })
-    dbConn.destroy()
   })
 })
 

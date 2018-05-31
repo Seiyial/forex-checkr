@@ -20,6 +20,7 @@
     "express": "^4.16.2",
     "jquery": "^3.3.1",
     "knex": "^0.14.6",
+    "lodash": "^4.17.10",
     "pg": "^7.4.3",
     "request": "^2.87.0"
   },
@@ -28,6 +29,7 @@
     "@babel/plugin-proposal-export-default-from": "^7.0.0-beta.49",
     "@babel/preset-env": "^7.0.0-beta.49",
     "@babel/preset-react": "^7.0.0-beta.49",
+    "@babel/preset-stage-0": "^7.0.0-beta.49",
     "babel-loader": "^8.0.0-beta",
     "clean-webpack-plugin": "^0.1.19",
     "concurrently": "^3.5.1",
