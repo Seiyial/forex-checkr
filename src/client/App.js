@@ -63,6 +63,7 @@ export default class App extends React.Component {
 
     $.ajax({
       url: `http://localhost:5000/fixer_api/${searchVal1}/${searchVal2}`,
+      type: 'GET',
       data: '',
       crossDomain: true,
       success: (data, jQueryStatus, jqXHR) => {

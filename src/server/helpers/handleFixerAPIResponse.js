@@ -1,4 +1,4 @@
-exports.default = function (error, response, body, searchVal1, searchVal2) {
+exports.default = function (error, response, body, type = 'all', searchVal1 = null, searchVal2 = null) {
   const data = JSON.parse(body)
 
   if (response.statusCode !== 200) {
@@ -10,23 +10,7 @@ exports.default = function (error, response, body, searchVal1, searchVal2) {
 
   // Requests receives data from API --
   } else if (data.success) {
-    const rates = data.rates
-    const hasRates = rates && rates[searchVal1] && rates[searchVal2]
-    return(hasRates ?
-      // --> has match for searched values
-      {
-        status: 'success',
-        searchVal1,
-        searchVal2,
-        displayRate: rates[searchVal1]
-      }
-    :
-      // --> no match for searched Values
-      {
-        status: 'fail',
-        errorMessage: 'Service Error! Please contact tech support (Fixer API returned success without rate object)',
-      }
-    )
+    return handleSuccessResponse(data, type, searchVal1, searchVal2)
 
   } else if (data.error && data.error.code === 202) {
     return({
@@ -50,5 +34,36 @@ exports.default = function (error, response, body, searchVal1, searchVal2) {
       errorMessage: `Service Error! Please contact tech support
       (Fixer API Error (null error object))`
     })
+  }
+}
+
+const handleSuccessResponse = (data, type, searchVal1, searchVal2) => {
+  const rates = data.rates
+
+  if (type === 'all') {
+    // --> user is requesting for all exchange rates
+    return {
+      status: 'success',
+      allRates: rates
+    }
+
+  } else {
+    // --> user is not requesting for all, only one exchange rate
+    const hasRatesForThisSearch = rates && rates[searchVal1] && rates[searchVal2]
+    return(hasRatesForThisSearch ?
+      // --> has match for searched values
+      {
+        status: 'success',
+        searchVal1,
+        searchVal2,
+        displayRate: rates[searchVal1]
+      }
+    :
+      // --> no match for searched Values
+      {
+        status: 'fail',
+        errorMessage: 'Service Error! Please contact tech support (Fixer API returned success without rate object)',
+      }
+    )
   }
 }

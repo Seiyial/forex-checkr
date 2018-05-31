@@ -5,16 +5,57 @@ class ForexLevelsList extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      levelData: {}
+      levelData: {},
+      liveRates: {}
     }
     this.refreshRecords()
+    this.refreshLiveRates()
   }
 
   componentDidMount() {
-    this.interval = setInterval(() => this.refreshRecords(), 4000);
+    this.dbInterval = setInterval(() => this.refreshRecords(), 8000)
+    this.liveRatesInterval = setInterval(() => this.refreshLiveRates(), 10000)
   }
   componentWillUnmount() {
-    clearInterval(this.interval)
+    clearInterval(this.dbInterval)
+  }
+
+  refreshLiveRates() {
+    $.ajax({
+      url: 'http://localhost:5000/fixer_api',
+      type: 'GET',
+      data: '',
+      crossDomain: true,
+
+      success: (payload, jQueryStatus, jqXHR) => {
+        const { status, allRates, errorMessage } = payload
+        if (status && status === 'success') {
+          this.setState({ liveRates: { status, allRates } })
+          console.log('refresh live rates -ok', this.state.liveRates)
+        } else if (status) {
+          this.setState({ liveRates: { status, errorMessage } })
+        } else {
+          this.setState({ liveRates: { status: 'fail', errorMessage: 'Server Error! Failed to call endpoint)' } })
+        }
+      },
+
+      error: (payload, jQueryStatus, jqXHR) => {
+        this.setState({ liveRates: { status: 'fail', errorMessage: `Service Error! Failed to call endpoint (${jQueryStatus}, ${JSON.stringify(payload)})` } })
+      }
+    })
+  }
+
+  pluckLiveRate(forexName) {
+    // this method will need refactoring upon Fixer API's support of non-EUR base currency.
+    const currency1 = forexName.substring(0,3)
+    const currency2 = forexName.substring(4,7)
+    if (currency2 !== 'EUR') {
+      return 'N/A'
+    } else if (!this.state.liveRates.allRates) {
+      return '---'
+    } else {
+      return this.state.liveRates.allRates[currency1] || `${currency1} not found`
+    }
   }
 
   refreshRecords() {
@@ -51,7 +92,7 @@ class ForexLevelsList extends React.Component {
         success: (data, textStatus, jqXHR) => {
           if (data.apiSuccess) {
             this.refreshRecords()
-            window.alert('successfully deleted')
+            // window.alert('successfully deleted')
           } else {
             window.alert('oops, please try again')
           }
@@ -74,9 +115,9 @@ class ForexLevelsList extends React.Component {
           <table>
             <thead>
               <tr>
-                <th>ID</th>
                 <th>Forex</th>
                 <th>Upper Limit</th>
+                <th>Current Rate</th>
                 <th>Lower Limit</th>
                 <th>Active</th>
                 <th></th>
@@ -87,9 +128,9 @@ class ForexLevelsList extends React.Component {
               (data.length > 0) ?
               (data.map((item) => (
                 <tr key={`forexListItemId-${item.id}`}>
-                  <td>{item.id}</td>
                   <td>{item.forex_name}</td>
                   <td>{item.upper}</td>
+                  <td>{this.pluckLiveRate(item.forex_name)}</td>
                   <td>{item.lower}</td>
                   <td>{item.status ? '✓' : 'X'}</td>
                   <td><a href='' onClick={(e) => {e.preventDefault(); this.deleteRecord(item.id)}}>Delete</a></td>
