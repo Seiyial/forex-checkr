@@ -14,7 +14,7 @@ class ForexLevelsList extends React.Component {
 
   componentDidMount() {
     this.dbInterval = setInterval(() => this.refreshRecords(), 8000)
-    this.liveRatesInterval = setInterval(() => this.refreshLiveRates(), 10000)
+    // this.liveRatesInterval = setInterval(() => this.refreshLiveRates(), 3600000)
   }
   componentWillUnmount() {
     clearInterval(this.dbInterval)

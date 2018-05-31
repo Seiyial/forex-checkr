@@ -87,7 +87,7 @@ export default class App extends React.Component {
 
   render() {
     return(
-      <div id='fullContainer'>
+      <div id='fullContainer' className='bg--gradient'>
         <div className='columns'>
           <div className='column' />
           <div className='column is-three-quarters-mobile is-three-quarters-tablet is-half-desktop bg--white-plank mt-50 page--container-shadow'>
@@ -97,7 +97,7 @@ export default class App extends React.Component {
               <h4 className='subtitle is-4'>Add a Rate</h4>
               <p>
                   Enter currency codes to search for an exchange rate.<br />
-                  <small>Note: EUR base currency cannot be edited as for the time being (limitation of Fixer API Free tier)</small>
+                  <small>Note: EUR base currency cannot be edited as for the time being</small>
               </p>
               
               <div className='field'>
