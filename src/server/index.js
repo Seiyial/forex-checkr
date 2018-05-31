@@ -48,12 +48,14 @@ app.post('/forex_levels', function(req, res) {
 
 // LIST
 app.get('/forex_levels', function(req, res) {
-  dbConn = knex()
-  dbConn.select().from('forex_levels').then(
-    (dbResp) => res.json({ success: true, data: dbResp })
-  ).catch((dbErr) => {
+  const dbConn = knex()
+  dbConn.select().from('forex_levels').then((dbResp) => {
+    res.json({ apiSuccess: true, dbPayload: dbResp })
+    dbConn.destroy()
+  }).catch((dbErr) => {
     console.log(dbErr)
-    res.json({ success: false, message: 'System Database Error' })
+    res.json({ apiSuccess: false, message: 'Sorry, database error' })
+    dbConn.destroy()
   })
 })
 

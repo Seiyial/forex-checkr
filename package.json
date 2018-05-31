@@ -24,6 +24,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.49",
+    "@babel/plugin-proposal-export-default-from": "^7.0.0-beta.49",
     "@babel/preset-env": "^7.0.0-beta.49",
     "@babel/preset-react": "^7.0.0-beta.49",
     "babel-loader": "^8.0.0-beta",

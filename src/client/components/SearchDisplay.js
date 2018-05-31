@@ -46,7 +46,7 @@ const SearchDisplay = ({ searchShow, handleCreateRecord, newRecordFormMessage, n
   } else {
     return(
       <p>
-        (search for a rate above)
+        
       </p>
     )
   }

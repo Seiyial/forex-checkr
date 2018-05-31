@@ -1,6 +1,6 @@
 import React from 'react'
 import $ from 'jquery'
-import SearchDisplay from './components/SearchDisplay'
+import { SearchDisplay, ForexLevelsList } from './components'
 
 const formatForexCode = (input) => input.substring(0,3).toUpperCase()
 
@@ -33,23 +33,25 @@ export default class App extends React.Component {
     if (!upper || !lower) {
       return that.setState({ newRecordFormMessage: 'Please input the upper & lower limits.'})
     } else if (displayRate && (upper > displayRate) && (lower < displayRate)) {
-      console.log('(*) handleCreateRecord =>', upperVal, lowerVal, displayRate)
+
       const payload = JSON.stringify({ searchVal1, searchVal2, upperVal, lowerVal, displayRate })
-      // console.log('(*) payload =>', payload)
+
       $.ajax({
         url: 'http://localhost:5000/forex_levels',
         type: 'POST',
         contentType: 'application/json',
         data: payload,
+
         success: (data, textStatus, jqXHR) => {
-          console.log('(*) status =>', data)
           const message = data.success ? 'Successfully saved.' : (data.message || '')
           that.setState({ newRecordFormMessage: message })
         },
+
         error: (jqXHR, textStatus, errorThrown) => {
           that.setState({ newRecordFormMessage: `error saving: ${textStatus}, ${errorThrown}`})
         }
       })
+
     } else {
       that.setState({ newRecordFormMessage: 'Please ensure the upper and lower limits are input correctly.' })
     }
@@ -95,7 +97,7 @@ export default class App extends React.Component {
         </p>
 
         <div>
-          <div><h4>Check for a rate</h4></div>
+          <div><h4>Add a Rate</h4></div>
           &nbsp;
           To:
           &nbsp;
@@ -134,6 +136,8 @@ export default class App extends React.Component {
           newRecordForm={this.state.newRecordForm}
           setNewRecordForm={(field, value) => this.setNewRecordForm(this, field, value)}
         />
+
+        <ForexLevelsList />
       </div>
     )
   }
