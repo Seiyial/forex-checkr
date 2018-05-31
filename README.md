@@ -7,11 +7,13 @@
 1. Install Dependencies
 
    ```bash
-   $ git clone https://github.com/seiyial/interview-node.git
+   $ git clone https://github.com/seiyial/forex-checkr.git
+   $ cd forex-checkr
+   $ git checkout sayhao
    $ yarn
    ```
 
-2. Duplicate `.env.example` into `.env` and insert the required values.
+2. Duplicate `.env.example` into `.env` and modify it to include the required values (namely the `FIXER_API_ACCESS_KEY`.)
 
 3. Create and migrate database.
 
