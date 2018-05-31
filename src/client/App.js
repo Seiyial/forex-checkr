@@ -1,6 +1,7 @@
 import React from 'react'
 import $ from 'jquery'
 import { SearchDisplay, ForexLevelsList } from './components'
+import './styles/main.scss'
 
 const formatForexCode = (input) => input.substring(0,3).toUpperCase()
 
@@ -53,7 +54,7 @@ export default class App extends React.Component {
       })
 
     } else {
-      that.setState({ newRecordFormMessage: 'Please ensure the upper and lower limits are input correctly.' })
+      that.setState({ newRecordFormMessage: 'Please ensure that the upper and lower limits have been input correctly.' })
     }
   }
 
@@ -86,59 +87,77 @@ export default class App extends React.Component {
 
   render() {
     return(
-      <div id="container">
-        <h1> Welcome to ForexCheckr!! </h1>
+      <div id='fullContainer'>
+        <div className='columns'>
+          <div className='column' />
+          <div className='column is-three-quarters-mobile is-three-quarters-tablet is-half-desktop bg--white-plank mt-50 page--container-shadow'>
+            <h1 className='title'> Welcome to ForexCheckr!! </h1>
 
-        <p>Enter currency codes to search for exchange rate:</p>
+            <div className='section'>
+              <h4 className='subtitle is-4'>Add a Rate</h4>
+              <p>
+                  Enter currency codes to search for an exchange rate.<br />
+                  <small>Note: EUR base currency cannot be edited as for the time being (limitation of Fixer API Free tier)</small>
+              </p>
+              
+              <div className='field'>
+                <label className='label'>To:</label>
+                <div className='field'>
+                  <p className='control'>
+                    <input
+                      className='input'
+                      id='searchBox1'
+                      placeholder='eg. USD'
+                      onChange={(e) => this.setState({ searchBox1: formatForexCode(e.target.value) })}
+                      value={this.state.searchBox1}
+                    />
+                  </p>
+                </div>
+                <label className='label'>From:</label>
+                <div className='field'>
+                  <p className='control'>
+                    <input
+                      className='input'
+                      id='searchBox2'
+                      placeholder='EUR'
+                      onChange={(e) => this.setState(
+                        // { searchBox2: formatForexCode(e.target.value) }
+                        // disabled because Fixer API Demo only allows EUR Base currency
+                        { searchBox2: 'EUR' }
+                      )}
+                      value={this.state.searchBox2}
+                    />
+                  </p>
+                </div>
+              </div>
+              <div className='field'>
+                <div className='field-label' />
+                <div className='field-body'>
+                  <div className='field'>
+                    <div className='control'>
+                      <button type='button' className='button is-primary' onClick={(e) => this.getForexRate()}>
+                        Search
+                      </button>
+                    </div>
+                  </div>
+                </div>
+                <div className='field-label' />
+                <div className='field-body' />
+              </div>
+            </div>
 
-        <p>
-          <code>
-            Note: EUR base currency cannot be edited as for the time being (limitation of Fixer API Free tier)
-          </code>
-        </p>
+            <SearchDisplay
+              searchShow={this.state.searchShow}
+              handleCreateRecord={() => this.handleCreateRecord(this)}
+              newRecordFormMessage={this.state.newRecordFormMessage}
+              newRecordForm={this.state.newRecordForm}
+              setNewRecordForm={(field, value) => this.setNewRecordForm(this, field, value)}
+            />
 
-        <div>
-          <div><h4>Add a Rate</h4></div>
-          &nbsp;
-          To:
-          &nbsp;
-
-          <input
-            id="searchBox1"
-            placeholder="USD"
-            onChange={(e) => this.setState({ searchBox1: formatForexCode(e.target.value) })}
-            value={this.state.searchBox1}
-          />
-          
-          &nbsp;
-          From: 
-          &nbsp;
-          <input
-            id="searchBox2"
-            placeholder="EUR"
-            onChange={(e) => this.setState(
-              // { searchBox2: formatForexCode(e.target.value) }
-              // disabled because Fixer API Demo only allows EUR Base currency
-              { searchBox2: 'EUR' }
-            )}
-            value={this.state.searchBox2}
-          />
-
-          <button
-            type="button"
-            onClick={(e) => this.getForexRate()}
-          >Search</button>
+            <ForexLevelsList />
+          </div>
+          <div className='column' />
         </div>
-
-        <SearchDisplay
-          searchShow={this.state.searchShow}
-          handleCreateRecord={() => this.handleCreateRecord(this)}
-          newRecordFormMessage={this.state.newRecordFormMessage}
-          newRecordForm={this.state.newRecordForm}
-          setNewRecordForm={(field, value) => this.setNewRecordForm(this, field, value)}
-        />
-
-        <ForexLevelsList />
       </div>
     )
   }

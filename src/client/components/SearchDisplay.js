@@ -7,27 +7,35 @@ const SearchDisplay = ({ searchShow, handleCreateRecord, newRecordFormMessage, n
   if (searchStatus === 'success') {
     const { searchVal1, searchVal2, displayRate } = searchShow
     return(
-      <div>
-        <h3>
-          The rate for {searchVal1}-{searchVal2} is {displayRate}.
+      <div className="section">
+        <h3 className="subtitle is-4">
+          The rate for {searchVal1}-{searchVal2} is <b>{displayRate}</b>.
         </h3>
-        <div>
-          <p>Upper Limit</p>
-          <input
-            value={newRecordForm.upperVal}
-            onChange={(e) => setNewRecordForm('upperVal', e.target.value)}
-            type='number'
-            step='0.000001'
-          />
-          <p>Lower Limit</p>
-          <input
-            value={newRecordForm.lowerVal}
-            onChange={(e) => setNewRecordForm('lowerVal', e.target.value)}
-            type='number'
-            step='0.000001'
-          />
+        <div className="field">
+          <label className="label">Set Upper Limit</label>
+          <div className="control">
+            <input
+              className="input"
+              value={newRecordForm.upperVal}
+              onChange={(e) => setNewRecordForm('upperVal', e.target.value)}
+              type='number'
+              step='0.000001'
+            />
+          </div>
         </div>
-        <button onClick={handleCreateRecord}>
+        <div className="field">
+          <label className="label">Set Lower Limit</label>
+          <div className="control">
+            <input
+              className="input"
+              value={newRecordForm.lowerVal}
+              onChange={(e) => setNewRecordForm('lowerVal', e.target.value)}
+              type='number'
+              step='0.000001'
+            />
+          </div>
+        </div>
+        <button className="button is-primary" onClick={handleCreateRecord}>
           Track This Rate
         </button>
         <p><small>{newRecordFormMessage}</small></p>

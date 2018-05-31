@@ -78,6 +78,15 @@ class ForexLevelsList extends React.Component {
     })
   }
 
+  getRowCssClassByStatus(item, liveRate) {
+    let result = ''
+    const liveRateValue = parseFloat(liveRate)
+
+    if (liveRateValue > parseFloat(item.upper)) result = 'tr-highlight--green'
+    if (liveRateValue < parseFloat(item.lower)) result = 'tr-highlight--red'
+    return result
+  }
+
   deleteRecord(id) {
     const reallyDelete = window.confirm('Are you sure?')
     if (reallyDelete) {
@@ -108,34 +117,39 @@ class ForexLevelsList extends React.Component {
   render() {
     const { levelData: { success, data, message } } = this.state
     return(
-      <div>
-        <h4>Saved Forex Levels</h4>
+      <div className='section'>
+        <h4 className='subtitle is-4'>Saved Forex Levels</h4>
         {
           success ?
-          <table>
+          <table className='table is-fullwidth'>
             <thead>
               <tr>
                 <th>Forex</th>
                 <th>Upper Limit</th>
                 <th>Current Rate</th>
                 <th>Lower Limit</th>
-                <th>Active</th>
                 <th></th>
               </tr>
             </thead>
             <tbody>
             {
               (data.length > 0) ?
-              (data.map((item) => (
-                <tr key={`forexListItemId-${item.id}`}>
-                  <td>{item.forex_name}</td>
-                  <td>{item.upper}</td>
-                  <td>{this.pluckLiveRate(item.forex_name)}</td>
-                  <td>{item.lower}</td>
-                  <td>{item.status ? '✓' : 'X'}</td>
-                  <td><a href='' onClick={(e) => {e.preventDefault(); this.deleteRecord(item.id)}}>Delete</a></td>
-                </tr>
-              )))
+              (data.map((item) => {
+                const liveRate = this.pluckLiveRate(item.forex_name)
+                const trClassName = this.getRowCssClassByStatus(item, liveRate)
+                return (
+                  <tr
+                    className={trClassName}
+                    key={`forexListItemId-${item.id}`}
+                  >
+                    <td>{item.forex_name}</td>
+                    <td>{item.upper}</td>
+                    <td>{this.pluckLiveRate(item.forex_name)}</td>
+                    <td>{item.lower}</td>
+                    <td><a href='' onClick={(e) => {e.preventDefault(); this.deleteRecord(item.id)}}>Delete</a></td>
+                  </tr>
+                )
+              }))
               :
               (<tr>
                 <td colspan='5'>No data</td>
